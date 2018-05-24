@@ -3,26 +3,6 @@ import tensorflow as tf
 
 GBL_STDDEV = 0.03 #Stddev for all random weight initializations
 
-#Width and height to scale images to for the network
-GBL_IM_SCALE_W = 64
-GBL_IM_SCALE_H = 64
-
-#Loads an image file as a tensor. Supports bmp, png, jpeg, and gif
-#Recommended use case is with dataset.map
-def image_loader(path, channels = 0, shape = None, name = None):
-    '''Loads an image file as a tensor'''
-
-    #Read the raw binary data
-    raw_image = tf.readfile(path)
-
-    #Decode the binary data into a tensor
-    image = tf.image.decode_image(raw_image, channels, name)
-
-    #Scales images to a common size
-    scaled_image = tf.image.resize_images(image, [GBL_IM_SCALE_W, GBL_IM_SCALE_H])
-
-    return scaled_image
-
 #Creates a convolutional layer for a CNN
 def conv_layer(input_data, input_channels, num_filters, filter_shape, name = 'CONV'):
     '''Creates a convolutional layer for a CNN'''
@@ -60,7 +40,7 @@ def pool_layer(input_data, shape = [2, 2]):
     return output
 
 #Creates a fully connected layer for classification
-def fc_layer(input_data, num_nodes, dropout = 0.0, name = 'FC'):
+def fc_layer(input_data, num_nodes, dropout = 0.0, relu = True, name = 'FC'):
     '''Creates a fully connected layer for classification'''
 
     #Generate the weights for each neuron
@@ -73,7 +53,8 @@ def fc_layer(input_data, num_nodes, dropout = 0.0, name = 'FC'):
     output = tf.matmul(input_data, weights) + bias
 
     #Apply RELU non-linearity
-    output = tf.nn.relu(output)
+    if relu:
+        output = tf.nn.relu(output)
 
     #If dropout in valid range, apply dropout
     if dropout > 0.0 and droput < 1.0:
