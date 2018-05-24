@@ -3,10 +3,21 @@ import tensorflow as tf
 
 GBL_STDDEV = 0.03
 
+#Loads an image file as a tensor. Supports bmp, png, jpeg, and gif
+def load_image(path, channels = 0, name = None):
+    '''Loads an image file as a tensor'''
+
+    #Read the raw binary data
+    with open(path, 'rb') as f:
+        raw_image = f.read()
+
+    #Decode the binary data and return the tensor
+    return tf.image.decode_image(raw_image, channels, name)
+
 #Creates a convolutional layer for a CNN
 def conv_layer(input_data, input_channels, num_filters, filter_shape, name = 'CONV'):
     '''Creates a convolutional layer for a CNN'''
-    
+
     #Organizes the shape of the convolutional layer; used to shape weights
     conv_filter = (filter_shape[0], filter_shape[1], input_channels, num_filters)
 
