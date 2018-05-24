@@ -1,18 +1,27 @@
 import numpy as np
 import tensorflow as tf
 
-GBL_STDDEV = 0.03
+GBL_STDDEV = 0.03 #Stddev for all random weight initializations
+
+#Width and height to scale images to for the network
+GBL_IM_SCALE_W = 64
+GBL_IM_SCALE_H = 64
 
 #Loads an image file as a tensor. Supports bmp, png, jpeg, and gif
-def load_image(path, channels = 0, name = None):
+#Recommended use case is with dataset.map
+def image_loader(path, channels = 0, shape = None, name = None):
     '''Loads an image file as a tensor'''
 
     #Read the raw binary data
-    with open(path, 'rb') as f:
-        raw_image = f.read()
+    raw_image = tf.readfile(path)
 
-    #Decode the binary data and return the tensor
-    return tf.image.decode_image(raw_image, channels, name)
+    #Decode the binary data into a tensor
+    image = tf.image.decode_image(raw_image, channels, name)
+
+    #Scales images to a common size
+    scaled_image = tf.image.resize_images(image, [GBL_IM_SCALE_W, GBL_IM_SCALE_H])
+
+    return scaled_image
 
 #Creates a convolutional layer for a CNN
 def conv_layer(input_data, input_channels, num_filters, filter_shape, name = 'CONV'):
