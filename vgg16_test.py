@@ -41,6 +41,12 @@ def image_loader(directory_path, im_shape = (224, 224)):
 
     return np.stack(image_list)
 
+def image_loader2(directory_path, im_shape = (224, 224)):
+
+    image_list = [img_to_array(load_img(x, target_size = im_shape)) for x in pathGenerator(directory_path)]
+
+    return np.stack(image_list)
+
 #Given a set of feature vectors, calculates the L2 distance between each vector and all other vectors
 def cross_compute_distances(data):
 
@@ -70,7 +76,7 @@ def main():
     model = VGG16(include_top = False)
 
     #Loads all rendered images of a single model into a tensor
-    images = image_loader(args.directory)
+    images = image_loader2(args.directory)
 
     assert(images.shape[0] == 480)
 
