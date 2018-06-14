@@ -3,7 +3,7 @@ require 'cunn'
 require 'cudnn'
 
 local net = nn.Sequential()
-
+    
 -- conv + batchnorm + relu
 local function Block(...)
     local arg = {...}
