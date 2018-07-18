@@ -3,8 +3,8 @@ import tensorflow as tf
 import sapi as s
 
 #Width and height to scale images to for the network
-GBL_IM_SCALE_W = 64
-GBL_IM_SCALE_H = 64
+GBL_IM_SCALE_W = 128
+GBL_IM_SCALE_H = 128
 
 #Number of filters in each convolutional layer
 GBL_FILTERS_1 = 16
@@ -15,6 +15,9 @@ GBL_DROPOUT = 0.5
 
 #Number of nodes in the dense layer
 GBL_FC_UNITS = 1024
+
+#Learning rate during training
+GBL_LEARNING_RATE = 0.00001
 
 #Loads an image file as a tensor. Supports bmp, png, jpeg, and gif
 #Recommended use case is with dataset.map
@@ -37,11 +40,11 @@ def XRAYnetwork(input_node, mode):
 
     conv1 = s.conv_layer(input_node, 1, GBL_FILTERS_1, [4, 4], name = 'CONV1')
 
-    pool1 = s.pool_layer(conv1)
+    pool1 = s.pool_layer(conv1, name = 'POOL1')
 
     conv2 = s.conv_layer(pool1, GBL_FILTERS_1, GBL_FILTERS_2, [4, 4], name = 'CONV2')
 
-    pool2 = s.pool_layer(conv2)
+    pool2 = s.pool_layer(conv2, name = 'POOL2')
 
     pool2_flat = tf.reshape(pool2, [-1, GBL_FILTERS_2 * GBL_IM_SCALE_W * GBL_IM_SCALE_H / 16])
 

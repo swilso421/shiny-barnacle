@@ -17,25 +17,25 @@ def conv_layer(input_data, input_channels, num_filters, filter_shape, name = 'CO
     bias = tf.Variable(tf.truncated_normal(num_filters), name = name + '_B')
 
     #Applies the convolution to the input, returning the convolved output
-    output = tf.nn.conv2d(input_data, weights, [1, 1, 1, 1], padding = 'SAME')
+    output = tf.nn.conv2d(input_data, weights, [1, 1, 1, 1], padding = 'SAME', name = name)
 
     #Adds the bias
     output += bias
 
     #Passes the tensor through a RELU activation layer
-    output = tf.nn.relu(output)
+    output = tf.nn.relu(output, name = name + '_RELU')
 
     return output
 
 #Creates a pooling layer for downsizing
-def pool_layer(input_data, shape = [2, 2]):
+def pool_layer(input_data, shape = [2, 2], name = 'POOL'):
     '''Creates a pooling layer for downsizing'''
 
     #Shape vector to be used by ksize and strides
     window = [1, shape[0], shape[1], 1]
 
     #Downsizes the input tensor
-    output = tf.nn.max_pool(input_data, ksize = window, strides = window, padding = 'SAME')
+    output = tf.nn.max_pool(input_data, ksize = window, strides = window, padding = 'SAME', name = name)
 
     return output
 
@@ -50,14 +50,14 @@ def fc_layer(input_data, num_nodes, dropout = 0.0, relu = True, name = 'FC'):
     bias = tf.Variable(tf.truncated_normal(num_nodes), name = name + '_B')
 
     #Multiply the input by the neuron weights and add the neuron biases
-    output = tf.matmul(input_data, weights) + bias
+    output = tf.matmul(input_data, weights, name = name) + bias
 
     #Apply RELU non-linearity
     if relu:
-        output = tf.nn.relu(output)
+        output = tf.nn.relu(output, name = name + '_RELU')
 
     #If dropout in valid range, apply dropout
-    if dropout > 0.0 and droput < 1.0:
-        output = tf.nn.dropout(output, keep_prob = dropout)
+    if 0.0 < droput < 1.0:
+        output = tf.nn.dropout(output, keep_prob = dropout, name = name + '_D')
 
     return output
